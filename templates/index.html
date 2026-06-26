@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solid Vision Engine - 3D Hologram Matrix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #00d4ff, #0099ff, #6600ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #00d4ff;
+            margin-bottom: 5px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            font-size: 0.9em;
+            color: #888;
+            font-style: italic;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .panel {
+            background: rgba(20, 30, 60, 0.7);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .panel:hover {
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .panel h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #00d4ff;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00d4ff;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        input[type="number"],
+        input[type="range"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 8px;
+            background: rgba(10, 20, 40, 0.8);
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        input[type="range"]:focus,
+        input[type="file"]:focus,
+        select:focus {
+            outline: none;
+            border-color: rgba(0, 212, 255, 0.8);
+            background: rgba(10, 20, 40, 1);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        input[type="range"] {
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #00ffff;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+            transform: scale(1.02);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: rgba(0, 212, 255, 0.8);
+        }
+
+        .output-panel {
+            background: rgba(20, 30, 60, 0.7);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .output-panel img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1em;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .status-message.success {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00ffff;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .status-message.error {
+            background: rgba(255, 100, 100, 0.2);
+            color: #ff6464;
+            border: 1px solid rgba(255, 100, 100, 0.5);
+        }
+
+        .status-message.loading {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 212, 255, 0.2);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #888;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab-btn.active {
+            color: #00d4ff;
+            border-bottom-color: #00d4ff;
+            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .info-text {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="subtitle">⚡ 528Hz STELLA Matrix ⚡</div>
+            <h1>SOLID VISION ENGINE</h1>
+            <p class="subtitle">3D Hologram Generation & AI Infrastructure Optimization</p>
+            <p class="tagline">Sacred Passage of Data Light • Divine Resonance Technology</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Panel: Controls -->
+            <div class="panel">
+                <h2>🎛️ HOLOGRAM MATRIX CONTROLS</h2>
+
+                <!-- Tab Navigation -->
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('scalar')">SCALAR MODE</button>
+                    <button class="tab-btn" onclick="switchTab('image')">IMAGE MODE</button>
+                </div>
+
+                <!-- SCALAR MODE TAB -->
+                <div id="scalar" class="tab-content active">
+                    <form id="scalarForm">
+                        <div class="form-group">
+                            <label for="resolution">Resolution (Pixels per Axis)</label>
+                            <input type="range" id="resolution" name="resolution" min="50" max="400" value="200" oninput="updateValue('resolution')">
+                            <span class="value-display" id="resolutionValue">200</span>
+                            <p class="info-text">Higher = more detail, slower processing</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="complexity">Complexity Index</label>
+                            <input type="range" id="complexity" name="complexity" min="0" max="200" value="85" oninput="updateValue('complexity')">
+                            <span class="value-display" id="complexityValue">85</span>
+                            <p class="info-text">0-100 standard, 100+ extreme amplitudes</p>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="resonanceFreq">Resonance Frequency (Hz)</label>
+                                <input type="number" id="resonanceFreq" name="resonanceFreq" value="528" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="baseFreqRef">Base Frequency Ref (Hz)</label>
+                                <input type="number" id="baseFreqRef" name="baseFreqRef" value="432" step="1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amplitudeScale">Amplitude Scale</label>
+                            <input type="number" id="amplitudeScale" name="amplitudeScale" value="2.0" step="0.1" min="0.1" max="5.0">
+                            <p class="info-text">Multiplier for wave amplitude</p>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="viewElev">View Elevation (°)</label>
+                                <input type="number" id="viewElev" name="viewElev" value="30" step="5" min="-90" max="90">
+                            </div>
+                            <div class="form-group">
+                                <label for="viewAzim">View Azimuth (°)</label>
+                                <input type="number" id="viewAzim" name="viewAzim" value="-60" step="5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cmapScalar">Colormap</label>
+                            <select id="cmapScalar" name="cmap">
+                                <option value="viridis">Viridis</option>
+                                <option value="plasma">Plasma</option>
+                                <option value="inferno">Inferno</option>
+                                <option value="magma">Magma</option>
+                                <option value="twilight">Twilight</option>
+                                <option value="cool">Cool</option>
+                                <option value="hot">Hot</option>
+                                <option value="spring">Spring</option>
+                                <option value="summer">Summer</option>
+                                <option value="autumn">Autumn</option>
+                                <option value="winter">Winter</option>
+                            </select>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn-primary" onclick="generateHologram()">✨ GENERATE HOLOGRAM</button>
+                            <button type="reset" class="btn-secondary">⟲ RESET</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- IMAGE MODE TAB -->
+                <div id="image" class="tab-content">
+                    <form id="imageForm">
+                        <div class="form-group">
+                            <label for="imageFile">Upload Image (PNG, JPG, BMP)</label>
+                            <input type="file" id="imageFile" name="image" accept="image/*" required>
+                            <p class="info-text">Image will be converted to grayscale heightmap</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="imageResolution">Resolution (Pixels per Axis)</label>
+                            <input type="range" id="imageResolution" name="resolution" min="50" max="400" value="256" oninput="updateValue('imageResolution')">
+                            <span class="value-display" id="imageResolutionValue">256</span>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="imageResonanceFreq">Resonance Frequency (Hz)</label>
+                                <input type="number" id="imageResonanceFreq" name="resonanceFreq" value="528" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="imageBaseFreqRef">Base Frequency Ref (Hz)</label>
+                                <input type="number" id="imageBaseFreqRef" name="baseFreqRef" value="432" step="1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="imageAmplitudeScale">Amplitude Scale</label>
+                            <input type="number" id="imageAmplitudeScale" name="amplitudeScale" value="2.0" step="0.1" min="0.1" max="5.0">
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="imageViewElev">View Elevation (°)</label>
+                                <input type="number" id="imageViewElev" name="viewElev" value="30" step="5" min="-90" max="90">
+                            </div>
+                            <div class="form-group">
+                                <label for="imageViewAzim">View Azimuth (°)</label>
+                                <input type="number" id="imageViewAzim" name="viewAzim" value="-60" step="5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cmapImage">Colormap</label>
+                            <select id="cmapImage" name="cmap">
+                                <option value="viridis">Viridis</option>
+                                <option value="plasma">Plasma</option>
+                                <option value="inferno">Inferno</option>
+                                <option value="magma">Magma</option>
+                                <option value="twilight">Twilight</option>
+                                <option value="cool">Cool</option>
+                                <option value="hot">Hot</option>
+                            </select>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn-primary" onclick="generateFromImage()">🖼️ GENERATE FROM IMAGE</button>
+                            <button type="reset" class="btn-secondary">⟲ RESET</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Panel: Output -->
+            <div class="output-panel" id="outputPanel">
+                <div style="text-align: center;">
+                    <div class="spinner" id="spinner" style="display: none;"></div>
+                    <p id="placeholder" style="color: #666; font-size: 1.1em;">⚡ 528Hz Resonance Awaiting Command ⚡</p>
+                    <p style="color: #555; font-size: 0.9em; margin-top: 15px;">Generate a hologram to visualize the sacred matrix</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateValue(fieldId) {
+            const field = document.getElementById(fieldId);
+            const displayId = fieldId === 'imageResolution' ? 'imageResolutionValue' : fieldId + 'Value';
+            const display = document.getElementById(displayId);
+            if (display) {
+                display.textContent = field.value;
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function generateHologram() {
+            const form = document.getElementById('scalarForm');
+            const data = {
+                resolution: parseInt(form.resolution.value),
+                complexity: parseFloat(form.complexity.value),
+                resonance_freq: parseFloat(form.resonanceFreq.value),
+                amplitude_scale: parseFloat(form.amplitudeScale.value),
+                base_frequency_ref: parseFloat(form.baseFreqRef.value),
+                view_elev: parseFloat(form.viewElev.value),
+                view_azim: parseFloat(form.viewAzim.value),
+                cmap: form.cmapScalar.value
+            };
+
+            displayLoading();
+
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    displayHologram(data.image, data.message);
+                } else {
+                    displayError(data.message);
+                }
+            })
+            .catch(error => {
+                displayError('Error: ' + error.message);
+            });
+        }
+
+        function generateFromImage() {
+            const form = document.getElementById('imageForm');
+            const fileInput = form.image;
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                displayError('Please select an image file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+            formData.append('resolution', parseInt(form.resolution.value));
+            formData.append('resonance_freq', parseFloat(form.resonanceFreq.value));
+            formData.append('amplitude_scale', parseFloat(form.amplitudeScale.value));
+            formData.append('base_frequency_ref', parseFloat(form.baseFreqRef.value));
+            formData.append('view_elev', parseFloat(form.viewElev.value));
+            formData.append('view_azim', parseFloat(form.viewAzim.value));
+            formData.append('cmap', form.cmap.value);
+
+            displayLoading();
+
+            fetch('/generate_from_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    displayHologram(data.image, data.message);
+                } else {
+                    displayError(data.message);
+                }
+            })
+            .catch(error => {
+                displayError('Error: ' + error.message);
+            });
+        }
+
+        function displayLoading() {
+            const panel = document.getElementById('outputPanel');
+            panel.innerHTML = '<div class="spinner"></div><p style="color: #00d4ff;">⚡ Generating hologram matrix...</p>';
+        }
+
+        function displayHologram(imageBase64, message) {
+            const panel = document.getElementById('outputPanel');
+            panel.innerHTML = `
+                <div style="width: 100%;">
+                    <img src="data:image/png;base64,${imageBase64}" alt="Hologram">
+                    <div class="status-message success">${message}</div>
+                </div>
+            `;
+        }
+
+        function displayError(message) {
+            const panel = document.getElementById('outputPanel');
+            panel.innerHTML = `<div class="status-message error">❌ ${message}</div>`;
+        }
+    </script>
+</body>
+</html>
